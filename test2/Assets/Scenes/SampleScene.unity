@@ -653,7 +653,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   h_speed: 10
-  vspeed: 500
+  vspeed: 450
   ds: 0
 --- !u!1 &1518100889
 GameObject:
