@@ -8,9 +8,9 @@ public class player_conroler : MonoBehaviour
     private SpriteRenderer gfx;
     private Rigidbody2D rb;
     private Transform my_transform;
-    private bool moving_left,moving_right,sprinting=false;
+    private bool moving_left,moving_right,sprinting=false,grounded;
     [SerializeField]
-    private Transform feet;
+    private Transform feet,feet2,feet3;
     [SerializeField]
     private LayerMask ground_layer;
     [SerializeField]
@@ -35,7 +35,17 @@ public class player_conroler : MonoBehaviour
             Debug.Log(rb.velocity.x);
         }
        //using ray to jump and puling down if he reachs max hight
-        RaycastHit2D grounded= Physics2D.Linecast(transform.position, feet.position,ground_layer);
+        RaycastHit2D ground_chechk1= Physics2D.Linecast(transform.position, feet.position,ground_layer);
+        RaycastHit2D ground_chechk2 = Physics2D.Linecast(transform.position, feet2.position, ground_layer);
+        RaycastHit2D ground_chechk3 = Physics2D.Linecast(transform.position, feet3.position, ground_layer);
+        if (ground_chechk1 || ground_chechk2 || ground_chechk3)
+        {
+            grounded = true;
+        }
+        else
+        {
+            grounded = false;
+        }
         if (grounded)
         {
             
@@ -56,11 +66,11 @@ public class player_conroler : MonoBehaviour
        //movig left and right
         if (Input.GetAxisRaw("Horizontal") != 0)
         {
-            if (grounded)
-            {
+            
+            
 
             rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * h_speed, rb.velocity.y);
-            }
+            
           
            
             if (Input.GetAxisRaw("Horizontal") > 0)

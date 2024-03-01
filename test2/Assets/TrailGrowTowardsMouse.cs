@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class TrailGrowTowardsMouse : MonoBehaviour
 {
+    private Vector2 origin;
+    [SerializeField]
+    private float max_dis;
     // Speed at which the trail grows towards the mouse click position
     public float growSpeed = 5f;
 
@@ -33,6 +36,7 @@ public class TrailGrowTowardsMouse : MonoBehaviour
     {
         // Get reference to the Trail Renderer component
         trailRenderer = GetComponent<TrailRenderer>();
+        origin= transform.position; 
     }
 
     void Update()
@@ -50,7 +54,7 @@ public class TrailGrowTowardsMouse : MonoBehaviour
                 currentInterpolationIndex++;
 
                 // Check if the trail has reached the target position
-                if (currentInterpolationIndex >= interpolationPositions.Length)
+                if (currentInterpolationIndex >= interpolationPositions.Length||((Vector2)nextPosition-origin).magnitude>max_dis)
                 {
                     isGrowing = false;
                 }
@@ -60,6 +64,9 @@ public class TrailGrowTowardsMouse : MonoBehaviour
         // Check for mouse click
         if (Input.GetMouseButtonDown(0))
         {
+            if((origin-(Vector2)transform.position).magnitude < max_dis)
+            {
+
             // Set the target position to the mouse click position
             targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             targetPosition.z = 0f; // Ensure the target position is at the same z-coordinate as the trail
@@ -72,6 +79,7 @@ public class TrailGrowTowardsMouse : MonoBehaviour
 
             // Start growing the trail towards the target position
             isGrowing = true;
+            }
         }
     }
 
