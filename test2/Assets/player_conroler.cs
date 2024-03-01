@@ -8,13 +8,15 @@ public class player_conroler : MonoBehaviour
     private SpriteRenderer gfx;
     private Rigidbody2D rb;
     private Transform my_transform;
-    private bool moving_left,moving_right;
+    private bool moving_left,moving_right,sprinting=false;
     [SerializeField]
     private Transform feet;
     [SerializeField]
     private LayerMask ground_layer;
     [SerializeField]
     private float h_speed=10,vspeed,slowing_speed,fall_multiplier;
+    private float orginal_speed;
+
     
     
     private void Start()
@@ -23,10 +25,15 @@ public class player_conroler : MonoBehaviour
         gfx = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         my_transform = GetComponent<Transform>();
+        orginal_speed = h_speed;
        
     }
     private void Update()
     {
+        if(Input.GetKeyDown(KeyCode.L)) 
+        {
+            Debug.Log(rb.velocity.x);
+        }
        //using ray to jump and puling down if he reachs max hight
         RaycastHit2D grounded= Physics2D.Linecast(transform.position, feet.position,ground_layer);
         if (grounded)
@@ -34,29 +41,27 @@ public class player_conroler : MonoBehaviour
             
             if (Input.GetKeyDown(KeyCode.Space))
             {
-              
-               // rb.velocity = new Vector2(0, 0);
-                rb.AddForce(new Vector2(0, vspeed));
+
+               rb.AddForce(new Vector2(0, vspeed), ForceMode2D.Impulse);
+                
             }
+           
+            
 
         }
-        else
-        {
-
-            if (Mathf.Abs(rb.velocity.y) < 0.5f)
-            {
-                rb.AddForce(new Vector2(0,fall_multiplier),ForceMode2D.Impulse);
-                Debug.Log("sss");
-            }
-        }
+       
 
 
 
        //movig left and right
         if (Input.GetAxisRaw("Horizontal") != 0)
         {
+            if (grounded)
+            {
 
             rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * h_speed, rb.velocity.y);
+            }
+          
            
             if (Input.GetAxisRaw("Horizontal") > 0)
             {
@@ -79,22 +84,14 @@ public class player_conroler : MonoBehaviour
             moving_left= false;
             moving_right= false;
         }
-        //sprint
-        if(Input.GetKey(KeyCode.LeftShift)&&(moving_left||moving_right)&&grounded) 
-        {
-            rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * h_speed*2, rb.velocity.y);
-            m_Animator.speed = 2;
-        }
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            m_Animator.speed = 1;
-        }
+       
+       
 
 
         //stopping the player if he is not pressing left or right
         if(!moving_left && !moving_right&&grounded)
         {
-            rb.velocity=Vector2.Lerp(rb.velocity,Vector2.zero, Time.deltaTime*slowing_speed);
+            rb.velocity=Vector2.Lerp(rb.velocity,new Vector2(0,rb.velocity.y), Time.deltaTime*slowing_speed);
         }
 
 
